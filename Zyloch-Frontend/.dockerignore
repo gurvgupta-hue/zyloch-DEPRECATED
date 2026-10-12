@@ -1,0 +1,24 @@
+# Build artifacts
+node_modules
+.next
+.swc
+out
+
+# Dev / test files
+__tests__
+*.test.*
+*.spec.*
+jest.config.js
+jest.setup.js
+coverage
+test-reports
+
+# Misc
+.git
+.gitignore
+.env*
+!.env.example
+.vault.env
+README.md
+docs
+*.log

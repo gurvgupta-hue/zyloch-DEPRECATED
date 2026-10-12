@@ -1,0 +1,68 @@
+[
+  { "id": "CFN-SEC-IAM-001", "title": "iam: No Inline Policy" },
+  { "id": "CFN-SEC-IAM-002", "title": "iam: Role Wildcard Action" },
+  { "id": "CFN-SEC-IAM-003", "title": "iam: Role Wildcard Resource" },
+  { "id": "CFN-SEC-IAM-004", "title": "iam: Policy Wildcard Action" },
+  { "id": "CFN-SEC-IAM-005", "title": "iam: Policy Wildcard Resource" },
+  { "id": "CFN-SEC-IAM-006", "title": "iam: User Attached Policies" },
+  { "id": "CFN-SEC-IAM-007", "title": "iam: Role Assume All Principals" },
+  { "id": "CFN-SEC-IAM-008", "title": "iam: Access Key Rotation" },
+  { "id": "CFN-SEC-IAM-009", "title": "iam: Password Policy Min Length" },
+  { "id": "CFN-SEC-IAM-010", "title": "iam: Password Policy Reuse" },
+
+  { "id": "CFN-SEC-S3-001", "title": "s3: Bucket Public ACL" },
+  { "id": "CFN-SEC-S3-002", "title": "s3: Bucket Public Policy" },
+  { "id": "CFN-SEC-S3-003", "title": "s3: Bucket Versioning" },
+  { "id": "CFN-SEC-S3-004", "title": "s3: Bucket Encryption" },
+  { "id": "CFN-SEC-S3-005", "title": "s3: Bucket Logging" },
+  { "id": "CFN-SEC-S3-006", "title": "s3: Bucket Block Public Access" },
+  { "id": "CFN-SEC-S3-007", "title": "s3: Bucket HTTPS Only" },
+  { "id": "CFN-SEC-S3-008", "title": "s3: Bucket MFA Delete" },
+
+  { "id": "CFN-SEC-EC2-001", "title": "ec2: Security Group Open SSH" },
+  { "id": "CFN-SEC-EC2-002", "title": "ec2: Security Group Open RDP" },
+  { "id": "CFN-SEC-EC2-003", "title": "ec2: Security Group Open All" },
+  { "id": "CFN-SEC-EC2-004", "title": "ec2: Instance No Public IP" },
+  { "id": "CFN-SEC-EC2-005", "title": "ec2: Instance IMDSv2" },
+  { "id": "CFN-SEC-EC2-006", "title": "ec2: EBS Volume Encryption" },
+  { "id": "CFN-SEC-EC2-007", "title": "ec2: Instance Detailed Monitoring" },
+
+  { "id": "CFN-SEC-RDS-001", "title": "rds: Encryption At Rest" },
+  { "id": "CFN-SEC-RDS-002", "title": "rds: No Public Access" },
+  { "id": "CFN-SEC-RDS-003", "title": "rds: Multi AZ" },
+  { "id": "CFN-SEC-RDS-004", "title": "rds: Deletion Protection" },
+  { "id": "CFN-SEC-RDS-005", "title": "rds: Auto Minor Version Upgrade" },
+  { "id": "CFN-SEC-RDS-006", "title": "rds: Backup Retention" },
+
+  { "id": "CFN-SEC-KMS-001", "title": "kms: Key Rotation" },
+
+  { "id": "CFN-SEC-CT-001", "title": "cloudtrail: Enabled" },
+  { "id": "CFN-SEC-CT-002", "title": "cloudtrail: Encryption" },
+  { "id": "CFN-SEC-CT-003", "title": "cloudtrail: Log File Validation" },
+  { "id": "CFN-SEC-CT-004", "title": "cloudtrail: Multi Region" },
+
+  { "id": "CFN-SEC-LAM-001", "title": "lambda: Function Policy Wildcard" },
+  { "id": "CFN-SEC-LAM-002", "title": "lambda: Tracing Enabled" },
+
+  { "id": "CFN-SEC-ELB-001", "title": "elb: Access Logs Enabled" },
+  { "id": "CFN-SEC-ELB-002", "title": "elb: HTTPS Listener" },
+  { "id": "CFN-SEC-ELB-003", "title": "elb: Drop HTTP Headers" },
+
+  { "id": "CFN-SEC-CFT-001", "title": "cloudfront: Distribution HTTPS Only" },
+  { "id": "CFN-SEC-CFT-002", "title": "cloudfront: Distribution Logging" },
+  { "id": "CFN-SEC-CFT-003", "title": "cloudfront: Origin HTTPS" },
+
+  { "id": "CFN-SEC-SQS-001", "title": "sqs: Queue Encryption" },
+  { "id": "CFN-SEC-SNS-001", "title": "sns: Topic Encryption" },
+
+  { "id": "CFN-SEC-SEC-001", "title": "cloudformation: No Hardcoded Credentials" },
+
+  { "id": "CFN-SEC-EKS-001", "title": "eks: Cluster Private Endpoint" },
+  { "id": "CFN-SEC-EKS-002", "title": "eks: Cluster Logging" },
+
+  { "id": "CFN-SEC-DYN-001", "title": "dynamodb: PITR Enabled" },
+  { "id": "CFN-SEC-DYN-002", "title": "dynamodb: Encryption" },
+
+  { "id": "CFN-SEC-ELC-001", "title": "elasticache: Encryption At Rest" },
+  { "id": "CFN-SEC-ELC-002", "title": "elasticache: Encryption In Transit" }
+]

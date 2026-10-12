@@ -1,0 +1,68 @@
+name: Block Sensitive Files in PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  block-sensitive-files:
+    name: Validate blocked files are not committed
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Check PR changed files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "Checking PR for blocked files..."
+
+          # Files/folders that must NOT be committed in PR
+          BLOCKED_PATTERNS=(
+            '^vault(/|$)'
+            '^Dockerfile_DEV$'
+            '^docker-entrypoint\.sh$'
+            '^\.vault\.env$'
+            '^\.env$'
+            '^docker-compose\.yml$'
+          )
+
+          git fetch origin "${{ github.base_ref }}" --depth=1
+
+          CHANGED_FILES=$(git diff --name-only --diff-filter=ACMRT \
+            "origin/${{ github.base_ref }}"...HEAD)
+
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          FOUND_BLOCKED=false
+          BLOCKED_FOUND_LIST=""
+
+          while IFS= read -r file; do
+            for pattern in "${BLOCKED_PATTERNS[@]}"; do
+              if [[ "$file" =~ $pattern ]]; then
+                FOUND_BLOCKED=true
+                BLOCKED_FOUND_LIST+="$file"$'\n'
+              fi
+            done
+          done <<< "$CHANGED_FILES"
+
+          if [[ "$FOUND_BLOCKED" == "true" ]]; then
+            echo ""
+            echo ":x: PR contains blocked files/folders:"
+            echo "$BLOCKED_FOUND_LIST"
+            echo ""
+            echo "Remove these files from the PR before merging."
+            exit 1
+          fi
+
+          echo ":white_check_mark: No blocked files found in this PR."

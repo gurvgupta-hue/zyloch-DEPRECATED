@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" id="git-commit">
+  <rect width="256" height="256" fill="none"></rect>
+  <circle cx="128.002" cy="128" r="52" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></circle>
+  <line x1="12.002" x2="76.002" y1="128" y2="128" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+  <line x1="180.002" x2="244.002" y1="128" y2="128" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+</svg>

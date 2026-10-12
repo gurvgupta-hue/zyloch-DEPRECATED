@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 256 256" id="bash-terminal">
+  <defs>
+    <linearGradient id="a">
+      <stop class="stop1" offset="0%" stop-color="#0059ff"></stop>
+      <stop class="stop2" offset="100%" stop-color="#00b7ff"></stop>
+    </linearGradient>
+  </defs>
+  <path stroke="url(#a)" stroke-linecap="round" stroke-linejoin="round" stroke-width="19" d="m53.333 64 64 64 -64 64m74.667 -5.333h85.333"></path>
+</svg>

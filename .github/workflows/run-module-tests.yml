@@ -1,0 +1,458 @@
+name: Module Tests & Report
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "Zyloch-Frontend/**"
+      - "Zyloch-Backend/**"
+      - "Zyloch-GHAPP-Backend/**"
+      - "scripts/ci/**"
+      - ".github/workflows/run-module-tests.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "Zyloch-Frontend/**"
+      - "Zyloch-Backend/**"
+      - "Zyloch-GHAPP-Backend/**"
+      - "scripts/ci/**"
+      - ".github/workflows/run-module-tests.yml"
+  workflow_dispatch:
+
+# Top-level permissions inherited by all jobs unless a job overrides them.
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+concurrency:
+  group: module-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+# ####
+# JOB 0 — detect which modules changed (ZF / ZB / ZGB)
+# ####
+jobs:
+  changes:
+    name: Detect module changes
+    runs-on: ubuntu-latest
+    # Job-level permissions replace workflow defaults — must include contents:read
+    # for checkout (push) and pull-requests:read for paths-filter on PRs.
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      frontend: ${{ steps.resolve.outputs.frontend }}
+      backend: ${{ steps.resolve.outputs.backend }}
+      ghapp: ${{ steps.resolve.outputs.ghapp }}
+      matrix: ${{ steps.resolve.outputs.matrix }}
+    steps:
+      # paths-filter uses the PR API on pull_request (no git checkout needed).
+      - name: Checkout
+        if: github.event_name == 'push'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed paths
+        if: github.event_name != 'workflow_dispatch'
+        uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'Zyloch-Frontend/**'
+            backend:
+              - 'Zyloch-Backend/**'
+            ghapp:
+              - 'Zyloch-GHAPP-Backend/**'
+            ci-shared:
+              - 'scripts/ci/**'
+              - '.github/workflows/run-module-tests.yml'
+
+      - name: Resolve modules to test
+        id: resolve
+        env:
+          FILTER_FE: ${{ steps.filter.outputs.frontend }}
+          FILTER_BE: ${{ steps.filter.outputs.backend }}
+          FILTER_GH: ${{ steps.filter.outputs.ghapp }}
+          FILTER_CI: ${{ steps.filter.outputs.ci-shared }}
+        run: |
+          python3 <<'PY'
+          import json, os
+
+          configs = {
+              "frontend": {
+                  "module": "Zyloch-Frontend",
+                  "runtime": "node",
+                  "node_runner": "jest",
+              },
+              "backend": {
+                  "module": "Zyloch-Backend",
+                  "runtime": "node",
+                  "node_runner": "builtin",
+              },
+              "ghapp": {
+                  "module": "Zyloch-GHAPP-Backend",
+                  "runtime": "python",
+                  "node_runner": "",
+              },
+          }
+
+          if os.environ["GITHUB_EVENT_NAME"] == "workflow_dispatch":
+              flags = {k: True for k in configs}
+          else:
+              flags = {
+                  "frontend": os.environ.get("FILTER_FE") == "true",
+                  "backend": os.environ.get("FILTER_BE") == "true",
+                  "ghapp": os.environ.get("FILTER_GH") == "true",
+              }
+              if os.environ.get("FILTER_CI") == "true":
+                  flags = {k: True for k in configs}
+
+          matrix = [configs[k] for k in ("frontend", "backend", "ghapp") if flags[k]]
+          out = os.environ["GITHUB_OUTPUT"]
+          with open(out, "a", encoding="utf-8") as fh:
+              for key, val in flags.items():
+                  fh.write(f"{key}={'true' if val else 'false'}\n")
+              fh.write(f"matrix={json.dumps(matrix)}\n")
+          PY
+
+# ####
+# JOB 1 — per-module test matrix (only modules with changes)
+# ####
+  test-module:
+    name: Test ${{ matrix.module }}
+    needs: changes
+    if: ${{ needs.changes.outputs.matrix != '[]' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.changes.outputs.matrix) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      # ── Node modules ──────────────────────────────────────────────────────
+      - name: Set up Node.js
+        if: matrix.runtime == 'node'
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ${{ matrix.module }}/package-lock.json
+
+      - name: Install Node dependencies
+        if: matrix.runtime == 'node'
+        working-directory: ${{ matrix.module }}
+        run: npm ci
+
+      - name: Run Frontend tests (Jest + JUnit + coverage)
+        if: matrix.runtime == 'node' && matrix.node_runner == 'jest'
+        working-directory: ${{ matrix.module }}
+        env:
+          CI: true
+        run: |
+          mkdir -p test-reports
+          npm run test:ci
+
+      - name: Run Backend tests (Node test runner + JUnit + coverage)
+        if: matrix.runtime == 'node' && matrix.node_runner == 'builtin'
+        working-directory: ${{ matrix.module }}
+        run: |
+          mkdir -p test-reports
+          npx --yes c8@10 \
+            --include='utils/**' \
+            --include='helpers/**' \
+            --reporter=json-summary \
+            --report-dir=test-reports/coverage \
+            -- node --test \
+              --test-reporter=spec \
+              --test-reporter-destination=stdout \
+              --test-reporter=junit \
+              --test-reporter-destination=test-reports/junit-${{ matrix.module }}.xml \
+              tests/*.test.js
+
+      # ── Python module ─────────────────────────────────────────────────────
+      - name: Set up Python
+        if: matrix.runtime == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: Zyloch-GHAPP-Backend/requirements-ci.txt
+
+      - name: Install Python CI dependencies
+        if: matrix.runtime == 'python'
+        working-directory: Zyloch-GHAPP-Backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-ci.txt
+
+      - name: Run GHAPP tests (pytest + JUnit + coverage)
+        if: matrix.runtime == 'python'
+        working-directory: Zyloch-GHAPP-Backend
+        run: |
+          mkdir -p test-reports
+          pytest tests/ \
+            --junitxml=test-reports/junit-Zyloch-GHAPP-Backend.xml \
+            --cov=scanner_core \
+            --cov-report=json:test-reports/coverage.json \
+            --cov-report=term-missing \
+            -v
+
+      - name: Normalize coverage summary
+        if: always() && (matrix.runtime == 'node' || matrix.runtime == 'python')
+        working-directory: ${{ matrix.module }}
+        run: |
+          python3 "${{ github.workspace }}/scripts/ci/normalize-coverage.py" \
+            --module "${{ matrix.module }}" \
+            --module-root "${{ github.workspace }}/${{ matrix.module }}" \
+            --search-dir test-reports \
+            --output "test-reports/coverage-${{ matrix.module }}.json" \
+            || echo "Coverage summary not available for ${{ matrix.module }}"
+
+      # ── Upload artifacts (needed for aggregate job on every event) ─────────
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: test-reports-${{ matrix.module }}
+          path: ${{ matrix.module }}/test-reports/**
+          if-no-files-found: warn
+          retention-days: 14
+
+      # Annotates PRs and the Checks tab with per-test pass/fail lines.
+      # continue-on-error: true so missing XML on a brand-new module never
+      # blocks the whole pipeline.
+      - name: Publish check-run annotations
+        if: always()
+        continue-on-error: true
+        uses: dorny/test-reporter@v3
+        with:
+          name: "${{ matrix.module }} Tests"
+          path: "${{ matrix.module }}/test-reports/junit-*.xml"
+          reporter: java-junit
+          fail-on-error: false
+
+# ####
+# JOB 2 — aggregate reports (PR comment · push artifacts)
+# ####
+  aggregate-and-dashboard:
+    name: Aggregate test report
+    needs: [changes, test-module]
+    runs-on: ubuntu-latest
+    if: |
+      always() && !cancelled() && needs.changes.outputs.matrix != '[]'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Download all test-report artifacts
+        uses: actions/download-artifact@v7
+        with:
+          pattern: test-reports-*
+          merge-multiple: true
+          path: collected-reports
+
+      - name: Flatten JUnit XMLs and coverage JSON into dashboard input
+        run: |
+          mkdir -p dashboard-input
+          shopt -s nullglob globstar
+          for file in collected-reports/**/*.xml collected-reports/*.xml; do
+            cp "$file" "dashboard-input/$(basename "$file")"
+          done
+          for file in collected-reports/**/coverage-*.json collected-reports/coverage-*.json; do
+            cp "$file" "dashboard-input/$(basename "$file")"
+          done
+          echo "=== Dashboard input files ==="
+          ls -la dashboard-input/ || echo "(none)"
+
+      - name: Initialize trend history
+        run: echo "[]" > dashboard-input/test-history.json
+
+      - name: Generate HTML dashboard + summary
+        run: |
+          python scripts/ci/aggregate-test-report.py \
+            --reports-dir  dashboard-input \
+            --output       dashboard-site/index.html \
+            --history      dashboard-site/test-history.json \
+            --ref          "${{ github.ref_name }}" \
+            --sha          "${{ github.sha }}"
+
+      - name: Render Markdown report
+        if: always()
+        run: |
+          if [ ! -f dashboard-site/summary.json ]; then
+            echo "No summary.json — skipping report rendering"
+            exit 0
+          fi
+          python scripts/ci/render-summary-markdown.py \
+            --input  dashboard-site/summary.json \
+            --output dashboard-site/pr-comment.md \
+            --ref    "${{ github.ref_name }}" \
+            --sha    "${{ github.sha }}" \
+            --run-url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+      - name: Upload dashboard artifact (push only)
+        if: always() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        uses: actions/upload-artifact@v6
+        with:
+          name: test-dashboard
+          path: dashboard-site/
+          retention-days: 30
+
+      - name: Ensure PR comment body exists
+        if: github.event_name == 'pull_request' && always()
+        run: |
+          if [ ! -f dashboard-site/pr-comment.md ]; then
+            mkdir -p dashboard-site
+            printf '%s\n' \
+              '## Module test report' \
+              '' \
+              'Test summary could not be generated. Check the workflow logs and per-module jobs.' \
+              > dashboard-site/pr-comment.md
+          fi
+
+      - name: Post test report on PR
+        if: github.event_name == 'pull_request' && always()
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: zyloch-module-test-report
+          body-path: dashboard-site/pr-comment.md
+
+      - name: Write workflow summary
+        if: always()
+        run: |
+          if [ ! -f dashboard-site/pr-comment.md ]; then
+            echo "No report markdown — skipping workflow summary"
+            exit 0
+          fi
+          cat dashboard-site/pr-comment.md >> "$GITHUB_STEP_SUMMARY"
+
+# ####
+# JOB 3 — push Prometheus metrics to Grafana Cloud (optional)
+# Entire job is skipped when GRAFANA_CLOUD_* secrets are not set (see grafana-gate).
+# ####
+  grafana-gate:
+    name: Check Grafana configuration
+    runs-on: ubuntu-latest
+    outputs:
+      configured: ${{ steps.check.outputs.configured }}
+    steps:
+      - id: check
+        env:
+          GRAFANA_URL: ${{ secrets.GRAFANA_CLOUD_METRICS_URL }}
+          GRAFANA_USER: ${{ secrets.GRAFANA_CLOUD_METRICS_USER }}
+          GRAFANA_TOKEN: ${{ secrets.GRAFANA_CLOUD_METRICS_TOKEN }}
+        run: |
+          if [ -n "$GRAFANA_URL" ] && [ -n "$GRAFANA_USER" ] && [ -n "$GRAFANA_TOKEN" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  grafana-metrics:
+    name: Push metrics to Grafana Cloud
+    needs: [aggregate-and-dashboard, grafana-gate]
+    runs-on: ubuntu-latest
+    if: ${{ always() && needs.grafana-gate.outputs.configured == 'true' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
+
+    steps:
+      - name: Download dashboard summary
+        uses: actions/download-artifact@v7
+        with:
+          name: test-dashboard
+          path: dashboard-site
+
+      - name: Push Prometheus-style metrics
+        env:
+          GRAFANA_URL:   ${{ secrets.GRAFANA_CLOUD_METRICS_URL }}
+          GRAFANA_USER:  ${{ secrets.GRAFANA_CLOUD_METRICS_USER }}
+          GRAFANA_TOKEN: ${{ secrets.GRAFANA_CLOUD_METRICS_TOKEN }}
+        run: |
+          if [ ! -f dashboard-site/summary.json ]; then
+            echo "No summary.json found — cannot push metrics"
+            exit 1
+          fi
+
+          REPO="${{ github.repository }}"
+          REF="${{ github.ref_name }}"
+          SHA="${{ github.sha }}"
+          TS=$(date +%s%N)   # nanosecond Unix timestamp for Prometheus
+
+          # Build Prometheus remote-write payload (no leading whitespace)
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+
+          data   = json.loads(Path("dashboard-site/summary.json").read_text())
+          tot    = data["totals"]
+          repo   = os.environ["REPO"]
+          ref    = os.environ["REF"]
+          sha    = os.environ["SHA"]
+
+          common = f'repo="{repo}",ref="{ref}",sha="{sha[:12]}"'
+
+          lines = [
+              f'# TYPE zyloch_ci_test_success_rate gauge',
+              f'zyloch_ci_test_success_rate{{{common}}} {data["success_rate"]}',
+              f'# TYPE zyloch_ci_tests_total gauge',
+              f'zyloch_ci_tests_total{{{common}}} {tot["tests"]}',
+              f'# TYPE zyloch_ci_tests_passed gauge',
+              f'zyloch_ci_tests_passed{{{common}}} {tot["passed"]}',
+              f'# TYPE zyloch_ci_tests_failed gauge',
+              f'zyloch_ci_tests_failed{{{common}}} {tot["failures"]}',
+              f'# TYPE zyloch_ci_tests_errors gauge',
+              f'zyloch_ci_tests_errors{{{common}}} {tot["errors"]}',
+              f'# TYPE zyloch_ci_duration_seconds gauge',
+              f'zyloch_ci_duration_seconds{{{common}}} {tot["time"]}',
+          ]
+
+          overall_cov = data.get("coverage", {}).get("overall", {})
+          if overall_cov.get("lines_pct") is not None:
+              lines += [
+                  f'# TYPE zyloch_ci_coverage_lines_pct gauge',
+                  f'zyloch_ci_coverage_lines_pct{{{common}}} {overall_cov["lines_pct"]}',
+              ]
+
+          # Per-module metrics
+          for m in data["modules"]:
+              mod = m["module"]
+              rate = round((m["passed"] / m["tests"] * 100) if m["tests"] > 0 else 0, 2)
+              ml = f'module="{mod}",{common}'
+              lines += [
+                  f'# TYPE zyloch_ci_module_tests_total gauge',
+                  f'zyloch_ci_module_tests_total{{{ml}}} {m["tests"]}',
+                  f'# TYPE zyloch_ci_module_tests_passed gauge',
+                  f'zyloch_ci_module_tests_passed{{{ml}}} {m["passed"]}',
+                  f'# TYPE zyloch_ci_module_tests_failed gauge',
+                  f'zyloch_ci_module_tests_failed{{{ml}}} {m["failures"]}',
+                  f'# TYPE zyloch_ci_module_success_rate gauge',
+                  f'zyloch_ci_module_success_rate{{{ml}}} {rate}',
+              ]
+              mod_cov = m.get("coverage") or {}
+              if mod_cov.get("lines_pct") is not None:
+                  lines += [
+                      f'# TYPE zyloch_ci_module_coverage_lines_pct gauge',
+                      f'zyloch_ci_module_coverage_lines_pct{{{ml}}} {mod_cov["lines_pct"]}',
+                  ]
+
+          Path("metrics.txt").write_text("\n".join(lines) + "\n")
+          print(f"Written {len(lines)} metric lines for {len(data['modules'])} modules")
+          PY
+
+          echo "=== Metrics payload ==="
+          cat metrics.txt
+
+          curl -fsS \
+            -u "${GRAFANA_USER}:${GRAFANA_TOKEN}" \
+            -H "Content-Type: text/plain" \
+            --data-binary @metrics.txt \
+            "${GRAFANA_URL}"
+
+          echo "✅ Metrics pushed to Grafana Cloud"

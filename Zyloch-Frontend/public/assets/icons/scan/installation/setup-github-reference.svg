@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 210" width="520" height="210">
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <rect x="12" y="18" width="280" height="84" rx="42" fill="#edfaff" stroke="#cfeaf6" stroke-width="2"/>
+  <g transform="translate(34 38) scale(1.75)" fill="none" stroke="#f59e0b" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 14a1 1 0 0 1-.78-1.63l9-11a.5.5 0 0 1 .87.43l-1.67 6.68A1 1 0 0 0 11.39 10H20a1 1 0 0 1 .78 1.63l-9 11a.5.5 0 0 1-.87-.43l1.67-6.68A1 1 0 0 0 12.61 14z"/>
+  </g>
+  <text x="88" y="72" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="700" fill="#1596c5">Setup &lt; 2 min</text>
+
+  <circle cx="435" cy="60" r="42" fill="#f4f6fb"/>
+  <g transform="translate(414 39) scale(1.75)" fill="none" stroke="#4b5567" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.28-.36 6.72-1.61 6.72-7.25A5.65 5.65 0 0 0 19.22 3.3 5.3 5.3 0 0 0 19.08.35S17.9 0 15 1.85a13.38 13.38 0 0 0-7 0C5.1 0 3.92.35 3.92.35a5.3 5.3 0 0 0-.14 2.95A5.65 5.65 0 0 0 2.28 7.3c0 5.63 3.44 6.88 6.72 7.25A4.8 4.8 0 0 0 8 18v4"/>
+    <path d="M8 19c-3 .92-3-1.5-4.2-2"/>
+  </g>
+
+  <g transform="translate(150 135) scale(2)" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m20 6-11 11-5-5"/>
+  </g>
+  <text x="174" y="195" font-family="Inter, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#111827">Check</text>
+
+  <g transform="translate(320 135) scale(2)" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12h14"/>
+    <path d="m13 6 6 6-6 6"/>
+  </g>
+  <text x="344" y="195" font-family="Inter, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#111827">Arrow Right</text>
+</svg>

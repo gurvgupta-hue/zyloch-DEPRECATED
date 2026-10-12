@@ -1,0 +1,115 @@
+zyloch-gateway:
+  gatewayClassName: zyloch-gateway
+  gatewayIPAddress: zylogh-beta-one
+  tlsSecret: zyloch-tls
+  routes:
+    - hostname: zyloch-beta.sandbox-secure-code.com
+      parentRefs:
+        - name: zyloch-gateway
+          namespace: envoy-gateway-system
+          sectionName: http
+      rules:
+        - filters:
+            - type: RequestRedirect
+              requestRedirect:
+                scheme: https
+                statusCode: 301
+          backendRefs: []
+    - hostname: zyloch-beta.sandbox-secure-code.com
+      parentRefs:
+        - name: zyloch-gateway
+          namespace: envoy-gateway-system
+          sectionName: https
+      rules:
+        - matches:
+          - path:
+              type: PathPrefix
+              value: /auth/
+          - path:
+              type: PathPrefix
+              value: /api/
+          - path:
+              type: PathPrefix
+              value: /webhook/
+          backendRefs:
+          - name: zyloch-backend
+            port: 5000
+        - matches:
+          - path:
+              type: PathPrefix
+              value: /scan/
+          backendRefs:
+          - name: zyloch-policy-scanner
+            port: 8000
+        - matches:
+          - path:
+              type: PathPrefix
+              value: /
+          backendRefs:
+          - name: zyloch-frontend
+            port: 3000
+
+zyloch-frontend:
+  image:
+    repository: us-central1-docker.pkg.dev/sandbox-dev-474905/zyloch/zyloch-frontend@sha256:b19b2ba9343b44f633ffd3b01bb6d90f347606b1c442d83598f1e0b60a39275e
+  imagePullSecrets:
+    - name: gcr-json-key
+  env:
+    - name: NODE_ENV
+      value: production
+    - name: NEXT_PUBLIC_API_URL
+      value: https://zyloch-beta.sandbox-secure-code.com
+    - name: NEXT_PUBLIC_SCAN_API_URL
+      value: https://zyloch-beta.sandbox-secure-code.com
+    - name: NEXT_PUBLIC_GITHUB_APP_URL
+      value: https://github.com/apps/zylochbeta/
+  service:
+    port: 3000
+  ingress:
+    enabled: false
+
+zyloch-backend:
+  image:
+    repository: us-central1-docker.pkg.dev/sandbox-dev-474905/zyloch/zyloch-backend@sha256:5b275713b1e15accf123207ccb51f3d9be9d9ae668eb6f4ca892829673f3e365
+  imagePullSecrets:
+    - name: gcr-json-key
+  env:
+    - name: NODE_ENV
+      value: production
+    - name: FRONTEND_URL
+      value: https://zyloch-beta.sandbox-secure-code.com
+    - name: OAUTH_REDIRECT_URI
+      value: https://zyloch-beta.sandbox-secure-code.com/auth/github/callback
+    - name: PORT
+      value: "5000"
+  envFromSecrets:
+    - zyloch-backend-secrets
+  service:
+    port: 5000
+  useStatefulSet: true
+  statefulSetData:
+    logs:
+      mountPath: /app/logs
+
+
+zyloch-policy-scanner:
+  image:
+    repository: us-central1-docker.pkg.dev/sandbox-dev-474905/zyloch/zyloch-ghapp-backend@sha256:99d5cc2ec1e3634071f4476d6e996ad263d763c73ec8e82428a0347c537405a2
+  imagePullSecrets:
+    - name: gcr-json-key
+  envFromSecrets:
+    - zyloch-policy-scanner-secrets
+  service:
+    port: 8000
+  statefulSetData:
+    repos:
+      mountPath: /app/repos
+    output:
+      mountPath: /app/output
+
+zyloch-mongodb:
+  image:
+    repository: mongo
+    tag: "7.0"
+  envFromSecrets:
+    - zyloch-mongodb-secrets

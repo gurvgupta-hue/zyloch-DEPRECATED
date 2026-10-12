@@ -1,0 +1,147 @@
+[
+  {
+    "planId": "basic",
+    "name": "Basic",
+    "description": "Workflow, IaC, code quality and basic secret/AI skill scanning",
+    "entitlements": {
+      "maxUsers": 5,
+      "maxRepos": 2000,
+      "maxScansPerMonth": 100,
+      "scanners": [
+        "docker",
+        "kubernetes",
+        "terraform_aws",
+        "terraform_azure",
+        "terraform_gcp",
+        "bicep",
+        "ansible",
+        "cloudformation",
+        "workflow",
+        "yaml-json",
+        "secret_scanner",
+        "skill-scanner"
+      ],
+      "modules": [
+        "scanops",
+        "dashboard"
+      ],
+      "features": {
+        "scanops.workflow": "full",
+        "scanops.iac": "full",
+        "scanops.secret_scanner": "basic",
+        "scanops.skill_scanner": "basic",
+        "scanops.sbom": false,
+        "scanops.spec_scanner": false,
+        "scanops.yara": false,
+        "scanops.cis_agent": false,
+        "scanops.ai_vs_human": false,
+        "ai.autofix": false,
+        "settings.sso": false,
+        "settings.oauth_google": true,
+        "settings.oauth_microsoft": true,
+        "settings.email_support": true,
+        "settings.slack_support": false
+      },
+      "ssoEnabled": false,
+      "auditLogRetentionDays": 30
+    },
+    "isActive": true,
+    "pricing": {
+      "currency": "USD",
+      "perSeatMonthly": 40,
+      "perSeatAnnualMonthly": 30
+    }
+  },
+  {
+    "planId": "pro",
+    "name": "Pro",
+    "description": "Everything in Basic, plus full secret/AI skill scanning, API security, SBOM Manager and AI AutoFix",
+    "entitlements": {
+      "maxUsers": -1,
+      "maxRepos": 5000,
+      "maxScansPerMonth": 2000,
+      "scanners": [
+        "docker",
+        "kubernetes",
+        "terraform_aws",
+        "terraform_azure",
+        "terraform_gcp",
+        "bicep",
+        "ansible",
+        "cloudformation",
+        "workflow",
+        "yaml-json",
+        "secret_scanner",
+        "skill-scanner",
+        "sbom",
+        "spec-scanner"
+      ],
+      "modules": [
+        "scanops",
+        "dashboard"
+      ],
+      "features": {
+        "scanops.workflow": "full",
+        "scanops.iac": "full",
+        "scanops.secret_scanner": "full",
+        "scanops.skill_scanner": "full",
+        "scanops.sbom": true,
+        "scanops.spec_scanner": true,
+        "scanops.yara": false,
+        "scanops.cis_agent": false,
+        "scanops.ai_vs_human": false,
+        "ai.autofix": true,
+        "settings.sso": false,
+        "settings.oauth_google": true,
+        "settings.oauth_microsoft": true,
+        "settings.email_support": true,
+        "settings.slack_support": true
+      },
+      "ssoEnabled": false,
+      "auditLogRetentionDays": 90
+    },
+    "isActive": true,
+    "pricing": {
+      "currency": "USD",
+      "perSeatMonthly": 60,
+      "perSeatAnnualMonthly": 50
+    }
+  },
+  {
+    "planId": "enterprise",
+    "name": "Enterprise",
+    "description": "Full platform access",
+    "entitlements": {
+      "maxUsers": 500,
+      "maxRepos": 1000,
+      "maxScansPerMonth": 10000,
+      "scanners": [
+        "all"
+      ],
+      "modules": [
+        "scanops",
+        "dashboard"
+      ],
+      "features": {
+        "scanops.sbom": true,
+        "scanops.spec_scanner": true,
+        "scanops.iac": true,
+        "scanops.secret_scanner": true,
+        "scanops.workflow": true,
+        "scanops.yara": true,
+        "scanops.ai_vs_human": true,
+        "scanops.skill_scanner": true,
+        "scanops.cis_agent": true,
+        "settings.sso": true,
+        "settings.oauth_google": true,
+        "settings.oauth_microsoft": true,
+        "ai.autofix": true,
+        "settings.email_support": true,
+        "settings.slack_support": true
+      },
+      "ssoEnabled": true,
+      "auditLogRetentionDays": 365
+    },
+    "isActive": true
+  }
+]

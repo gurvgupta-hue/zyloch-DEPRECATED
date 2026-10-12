@@ -1,0 +1,7 @@
+gatewayClassName: envoy-gateway
+gatewayIPAddress: ""
+gatewayNamespace: envoy-gateway-system
+tlsSecret: ""
+routes: []
+  # - hostname: ""
+  #   rules: []

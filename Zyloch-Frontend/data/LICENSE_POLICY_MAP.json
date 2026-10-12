@@ -1,0 +1,521 @@
+{
+
+    "MIT": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Low",
+        "approvalStatus": "Pre-approved",
+        "usageRules": "May be freely used in commercial products if copyright and license notice are retained"
+    },
+    "Apache-2.0": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Low",
+        "approvalStatus": "Pre-approved",
+        "usageRules": "May be freely used in commercial products if copyright and license notice are retained"
+    },
+    "Apache-1.1": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Low",
+        "approvalStatus": "Pre-approved",
+        "usageRules": "May be freely used in commercial products if copyright and license notice are retained"
+    },
+    "BSD-3-Clause": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Low",
+        "approvalStatus": "Pre-approved",
+        "usageRules": "May be freely used in commercial products if copyright and license notice are retained"
+    },
+    "BSD-2-Clause": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Low",
+        "approvalStatus": "Pre-approved",
+        "usageRules": "May be freely used in commercial products if copyright and license notice are retained"
+    },
+    "BSD-3-Clause-Clear": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Low",
+        "approvalStatus": "Pre-approved",
+        "usageRules": "May be freely used in commercial products if copyright and license notice are retained"
+    },
+    "ISC": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Low",
+        "approvalStatus": "Pre-approved",
+        "usageRules": "May be freely used in commercial products if copyright and license notice are retained"
+    },
+    "0BSD": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Low",
+        "approvalStatus": "Pre-approved",
+        "usageRules": "May be freely used in commercial products if copyright and license notice are retained"
+    },
+    "Unlicense": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Low",
+        "approvalStatus": "Pre-approved",
+        "usageRules": "May be freely used in commercial products if copyright and license notice are retained"
+    },
+    "CC0-1.0": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Low",
+        "approvalStatus": "Pre-approved",
+        "usageRules": "May be freely used in commercial products if copyright and license notice are retained"
+    },
+    "Zlib": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Low",
+        "approvalStatus": "Pre-approved",
+        "usageRules": "May be freely used in commercial products if copyright and license notice are retained"
+    },
+    "Python-2.0": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Low",
+        "approvalStatus": "Pre-approved",
+        "usageRules": "May be freely used in commercial products if copyright and license notice are retained"
+    },
+    "WTFPL": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Functionally public-domain-like and low risk in practice, but its informal, non-OSI-standard wording causes some legal/compliance teams to flag it for review"
+    },
+
+
+    "LGPL-2.0": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "LGPL-2.0-only": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "LGPL-2.0-or-later": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "LGPL-2.1": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "LGPL-2.1-only": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "LGPL-2.1-or-later": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "LGPL-3.0": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "LGPL-3.0-only": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "LGPL-3.0-or-later": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "MPL-1.0": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "MPL-1.1": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "MPL-2.0": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "MPL-2.0-no-copyleft-exception": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "EPL-1.0": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "EPL-2.0": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "CDDL-1.0": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "CDDL-1.1": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+    "CPL-1.0": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed if linked dynamically; modifications must be shared under same license"
+    },
+
+   
+    "GPL-1.0": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license if distributed. Internal-only or CI/build-tooling use (not distributed) carries lower risk; embedding inside a distributed product/binary is high risk. Legal review required to confirm which applies"
+    },
+    "GPL-1.0-only": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license if distributed. Internal-only or CI/build-tooling use (not distributed) carries lower risk; embedding inside a distributed product/binary is high risk. Legal review required to confirm which applies"
+    },
+    "GPL-1.0-or-later": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license if distributed. Internal-only or CI/build-tooling use (not distributed) carries lower risk; embedding inside a distributed product/binary is high risk. Legal review required to confirm which applies"
+    },
+    "GPL-2.0": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license if distributed. Internal-only or CI/build-tooling use (not distributed) carries lower risk; embedding inside a distributed product/binary is high risk. Legal review required to confirm which applies"
+    },
+    "GPL-2.0-only": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license if distributed. Internal-only or CI/build-tooling use (not distributed) carries lower risk; embedding inside a distributed product/binary is high risk. Legal review required to confirm which applies"
+    },
+    "GPL-2.0-or-later": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license if distributed. Internal-only or CI/build-tooling use (not distributed) carries lower risk; embedding inside a distributed product/binary is high risk. Legal review required to confirm which applies"
+    },
+    "GPL-3.0": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license if distributed. Internal-only or CI/build-tooling use (not distributed) carries lower risk; embedding inside a distributed product/binary is high risk. GPL-3.0 also adds patent and anti-tivoization terms. Legal review required to confirm which applies"
+    },
+    "GPL-3.0-only": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license if distributed. Internal-only or CI/build-tooling use (not distributed) carries lower risk; embedding inside a distributed product/binary is high risk. GPL-3.0 also adds patent and anti-tivoization terms. Legal review required to confirm which applies"
+    },
+    "GPL-3.0-or-later": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license if distributed. Internal-only or CI/build-tooling use (not distributed) carries lower risk; embedding inside a distributed product/binary is high risk. GPL-3.0 also adds patent and anti-tivoization terms. Legal review required to confirm which applies"
+    },
+    "AGPL-1.0": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license. Not suitable for proprietary codebases"
+    },
+    "AGPL-1.0-only": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license. Not suitable for proprietary codebases"
+    },
+    "AGPL-1.0-or-later": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license. Not suitable for proprietary codebases"
+    },
+    "AGPL-3.0": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license. Not suitable for proprietary codebases"
+    },
+    "AGPL-3.0-only": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license. Not suitable for proprietary codebases"
+    },
+    "AGPL-3.0-or-later": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license. Not suitable for proprietary codebases"
+    },
+    "OSL-3.0": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license. Not suitable for proprietary codebases"
+    },
+    "EUPL-1.1": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license. Not suitable for proprietary codebases"
+    },
+    "EUPL-1.2": {
+        "category": "Open-Source-StrongCopyleft",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Any derivative or combined work must be open-sourced under the same license. Not suitable for proprietary codebases"
+    },
+
+    "SSPL-1.0": {
+        "category": "Source-Available-Restricted",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Server Side Public License, not OSI-approved. Offering the software (or a modified version) as a network/SaaS service requires open-sourcing your entire service stack, not just your modifications. Avoid in any hosted/SaaS offering"
+    },
+    "BUSL-1.1": {
+        "category": "Source-Available-Delayed-OpenSource",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Business Source License. Free for most uses but prohibits running it as a competing commercial product/service for a defined period before converting to an open license. Risk depends entirely on your use case vs. the license's Additional Use Grant — read it before use"
+    },
+    "Commons-Clause": {
+        "category": "Source-Available-Restricted",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Adds a 'no selling' restriction on top of a permissive base license (often Apache/MIT). Explicitly prohibits offering the software as a paid hosted service. High risk for any SaaS use"
+    },
+    "Elastic-2.0": {
+        "category": "Source-Available-Restricted",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "Elastic License 2.0 (ELv2). Prohibits providing the software as a hosted/managed service to third parties and prohibits circumventing license keys. Fine for internal use, risky if reselling as a service"
+    },
+
+    "LicenseRef-Proprietary": {
+        "category": "Proprietary-Commercial",
+        "riskLevel": "Medium",
+        "approvalStatus": "Purchase-Legal-Review",
+        "usageRules": "Use is limited to the scope of the purchased license. Redistribution prohibited"
+    },
+    "LicenseRef-Commercial": {
+        "category": "Proprietary-Commercial",
+        "riskLevel": "Medium",
+        "approvalStatus": "Purchase-Legal-Review",
+        "usageRules": "Use is limited to the scope of the purchased license. Redistribution prohibited"
+    },
+    "LicenseRef-Microsoft-EULA": {
+        "category": "Proprietary-Commercial",
+        "riskLevel": "Medium",
+        "approvalStatus": "Purchase-Legal-Review",
+        "usageRules": "Use is limited to the scope of the purchased license. Redistribution prohibited"
+    },
+    "LicenseRef-Adobe-EULA": {
+        "category": "Proprietary-Commercial",
+        "riskLevel": "Medium",
+        "approvalStatus": "Purchase-Legal-Review",
+        "usageRules": "Use is limited to the scope of the purchased license. Redistribution prohibited"
+    },
+    "LicenseRef-Oracle-EULA": {
+        "category": "Proprietary-Commercial",
+        "riskLevel": "Medium",
+        "approvalStatus": "Purchase-Legal-Review",
+        "usageRules": "Use is limited to the scope of the purchased license. Redistribution prohibited"
+    },
+
+   
+    "CC-BY-NC-1.0": {
+        "category": "Freeware-Shareware",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Free to use for personal/non-commercial use; restrictions may apply for business use"
+    },
+    "CC-BY-NC-2.0": {
+        "category": "Freeware-Shareware",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Free to use for personal/non-commercial use; restrictions may apply for business use"
+    },
+    "CC-BY-NC-3.0": {
+        "category": "Freeware-Shareware",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Free to use for personal/non-commercial use; restrictions may apply for business use"
+    },
+    "CC-BY-NC-4.0": {
+        "category": "Freeware-Shareware",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Free to use for personal/non-commercial use; restrictions may apply for business use"
+    },
+    "CC-BY-NC-ND-1.0": {
+        "category": "Freeware-Shareware",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Free to use for personal/non-commercial use; restrictions may apply for business use"
+    },
+    "CC-BY-NC-ND-2.0": {
+        "category": "Freeware-Shareware",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Free to use for personal/non-commercial use; restrictions may apply for business use"
+    },
+    "CC-BY-NC-ND-3.0": {
+        "category": "Freeware-Shareware",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Free to use for personal/non-commercial use; restrictions may apply for business use"
+    },
+    "CC-BY-NC-ND-4.0": {
+        "category": "Freeware-Shareware",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Free to use for personal/non-commercial use; restrictions may apply for business use"
+    },
+    "CC-BY-NC-SA-1.0": {
+        "category": "Freeware-Shareware",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Free to use for personal/non-commercial use; restrictions may apply for business use"
+    },
+    "CC-BY-NC-SA-2.0": {
+        "category": "Freeware-Shareware",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Free to use for personal/non-commercial use; restrictions may apply for business use"
+    },
+    "CC-BY-NC-SA-3.0": {
+        "category": "Freeware-Shareware",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Free to use for personal/non-commercial use; restrictions may apply for business use"
+    },
+    "CC-BY-NC-SA-4.0": {
+        "category": "Freeware-Shareware",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Free to use for personal/non-commercial use; restrictions may apply for business use"
+    },
+    "LicenseRef-Freeware": {
+        "category": "Freeware-Shareware",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Free to use for personal/non-commercial use; restrictions may apply for business use"
+    },
+    "LicenseRef-Shareware": {
+        "category": "Freeware-Shareware",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Free to use for personal/non-commercial use; restrictions may apply for business use"
+    },
+
+
+    "LicenseRef-Enterprise": {
+        "category": "Enterprise-Custom",
+        "riskLevel": "Variable",
+        "approvalStatus": "Legal-IT-Approval",
+        "usageRules": "Governed by negotiated terms including SLAs, support, and compliance"
+    },
+    "LicenseRef-Custom": {
+        "category": "Enterprise-Custom",
+        "riskLevel": "Variable",
+        "approvalStatus": "Legal-IT-Approval",
+        "usageRules": "Governed by negotiated terms including SLAs, support, and compliance"
+    },
+    "LicenseRef-Vendor-Specific": {
+        "category": "Enterprise-Custom",
+        "riskLevel": "Variable",
+        "approvalStatus": "Legal-IT-Approval",
+        "usageRules": "Governed by negotiated terms including SLAs, support, and compliance"
+    },
+
+ 
+    "CC-BY-3.0": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Creative Commons license, not designed for software; attribution requirements are ambiguous when applied to code. Avoid for production software dependencies — acceptable for docs/datasets/assets with attribution"
+    },
+    "CC-BY-4.0": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Creative Commons license, not designed for software; attribution requirements are ambiguous when applied to code. Avoid for production software dependencies — acceptable for docs/datasets/assets with attribution"
+    },
+    "CC-BY-SA-3.0": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed with attribution; derivative works must use same license"
+    },
+    "CC-BY-SA-4.0": {
+        "category": "Open-Source-WeakCopyleft",
+        "riskLevel": "Medium",
+        "approvalStatus": "Review-Required",
+        "usageRules": "Allowed with attribution; derivative works must use same license"
+    },
+    "Artistic-1.0": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Low",
+        "approvalStatus": "Pre-approved",
+        "usageRules": "May be freely used in commercial products if copyright and license notice are retained"
+    },
+    "Artistic-2.0": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Low",
+        "approvalStatus": "Pre-approved",
+        "usageRules": "May be freely used in commercial products if copyright and license notice are retained"
+    },
+    "BSL-1.0": {
+        "category": "Open-Source-Permissive",
+        "riskLevel": "Low",
+        "approvalStatus": "Pre-approved",
+        "usageRules": "May be freely used in commercial products if copyright and license notice are retained"
+    },
+
+   
+    "NOASSERTION": {
+        "category": "Unknown",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "License not declared - requires manual review and legal assessment"
+    },
+    "NONE": {
+        "category": "Unlicensed",
+        "riskLevel": "High",
+        "approvalStatus": "Legal-Review-Required",
+        "usageRules": "No license - all rights reserved. Do not use without explicit permission"
+    }
+}

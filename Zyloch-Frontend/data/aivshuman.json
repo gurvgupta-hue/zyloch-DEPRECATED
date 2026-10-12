@@ -1,0 +1,36 @@
+{
+  "_id": "6982339e7de2853f579ac59d",
+  "scan_id": "scan_20260203_174251_secure-code-demo_DB-Enhancer",
+  "scanner": "ai_check",
+  "repo_org": "secure-code-demo",
+  "repo_name": "DB-Enhancer",
+  "status": "completed",
+  "target_file": "secert/azure.py",
+  "per_scanner_results": {
+    "ai_check": {
+      "metadata": {
+        "scanner": "ai_check",
+        "timestamp": "2026-02-03T17:42:54.681893",
+        "total_files": 1,
+        "target_scope": "/tmp/zyloch_scan_20260203_174251_secure-code-demo_DB-Enhancer__do2_ds9/secure-code-demo_DB-Enhancer/secert/azure.py"
+      },
+      "scanned_files": [
+        "secert/azure.py"
+      ],
+      "findings": [
+        {
+          "file": "secert/azure.py",
+          "is_ai": 0,
+          "confidence": 0.8676608800888062,
+          "prediction": "human",
+          "severity": "info",
+          "description": "Detected as human",
+          "start_line": 1,
+          "end_line": 257,
+          "policy": "AI Code Detection"
+        }
+      ]
+    }
+  },
+  "created_at": "2026-02-03T17:42:54.681000"
+}

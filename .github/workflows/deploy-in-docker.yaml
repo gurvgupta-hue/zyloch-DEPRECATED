@@ -1,0 +1,137 @@
+name: Deploy to Self-Hosted Runner
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  
+
+env:
+  CONFIG_DIR: /home/runner/ci_cd_config
+  WORK_DIR: /home/runner/ci_cd_dir
+  APP_DIR: /home/runner/ci_cd_dir/zyloch
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    
+    steps:
+      - name: Setup directories
+        run: |
+          echo "Creating work directory if not exists..."
+          mkdir -p ${{ env.WORK_DIR }}
+          
+      - name: Clone or pull repository
+        run: |
+          cd ${{ env.WORK_DIR }}
+          
+          if [ -d "zyloch/.git" ]; then
+            echo "Repository exists. Pulling latest changes..."
+            sudo chown -R runner:runner zyloch
+            cd zyloch
+            git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Secure-Code-dev/zyloch.git
+            git fetch origin
+            git reset --hard origin/main
+            git clean -fd
+          else
+            echo "Cloning repository..."
+            sudo chown -R runner:runner zyloch
+            sudo rm -rf zyloch  # Remove if exists but not a git repo
+            git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Secure-Code-dev/zyloch.git zyloch
+            cd zyloch
+          fi
+          
+          echo "Repository ready at: ${{ env.APP_DIR }}"
+          git log -1 --oneline
+      
+      - name: Copy config files (override if exists)
+        run: |
+          cd ${{ env.APP_DIR }}
+          
+          echo "Copying config files from ${{ env.CONFIG_DIR }}..."
+          
+          # Copy root .env (for GHAPP-Backend/Policy Scanner)
+          if [ -f "${{ env.CONFIG_DIR }}/zyloch_ghapp_backend.env" ]; then
+            cp -f ${{ env.CONFIG_DIR }}/zyloch_ghapp_backend.env ./.env
+            echo "Copied zyloch_ghapp_backend.env → ./"
+          else
+            echo "${{ env.CONFIG_DIR }}/zyloch_ghapp_backend.env not found, skipping..."
+          fi
+          
+          # Copy backend.env
+          if [ -f "${{ env.CONFIG_DIR }}/zyloch_backend.env" ]; then
+            cp -f ${{ env.CONFIG_DIR }}/zyloch_backend.env ./Zyloch-Backend/.env
+            echo "Copied zyloch_backend.env → ./Zyloch-Backend/.env"
+          else
+            echo "${{ env.CONFIG_DIR }}/zyloch_backend.env not found, skipping..."
+          fi
+          
+          # Copy frontend.env
+          if [ -f "${{ env.CONFIG_DIR }}/zyloch_frontend.env" ]; then
+            cp -f ${{ env.CONFIG_DIR }}/zyloch_frontend.env ./Zyloch-Frontend/.env
+            echo "Copied zyloch_frontend.env → ./Zyloch-Frontend/.env"
+          else
+            echo "${{ env.CONFIG_DIR }}/zyloch_frontend.env not found, skipping..."
+          fi
+          
+          # Copy Frontend Dockerfile
+          if [ -f "${{ env.CONFIG_DIR }}/Frontend.Dockerfile" ]; then
+            cp -f ${{ env.CONFIG_DIR }}/Frontend.Dockerfile ./Zyloch-Frontend/Dockerfile
+            echo "Copied Frontend.Dockerfile → ./Zyloch-Frontend/Dockerfile"
+          else
+            echo "${{ env.CONFIG_DIR }}/Frontend.Dockerfile not found, skipping..."
+          fi
+          
+          echo ""
+          echo "Config files in place:"
+          ls -la ./.env ./Zyloch-Backend/.env ./Zyloch-Frontend/.env 2>/dev/null || true
+      
+      - name: Stop existing containers
+        run: |
+          cd ${{ env.APP_DIR }}
+          docker compose down --remove-orphans || true
+          echo "Existing containers stopped"
+      
+      - name: Build and start containers
+        run: |
+          cd ${{ env.APP_DIR }}
+          docker compose build --no-cache
+          docker compose up -d
+          echo "Containers started successfully"
+      
+      - name: Verify deployment
+        run: |
+          echo "Waiting for services to start..."
+          sleep 30
+          
+          echo "=== Container Status ==="
+          cd ${{ env.APP_DIR }}
+          docker compose ps
+          
+          echo ""
+          echo "=== Health Checks ==="
+          curl -s -o /dev/null -w "Frontend (3000): %{http_code}\n" http://localhost:3000 || echo "Frontend: starting..."
+          curl -s -o /dev/null -w "Backend (5000): %{http_code}\n" http://localhost:5000 || echo "Backend: starting..."
+          curl -s -o /dev/null -w "Scanner (8000): %{http_code}\n" http://localhost:8000 || echo "Scanner: starting..."
+      
+      - name: Cleanup old images
+        run: docker image prune -f
+      
+      - name: Deployment summary
+        run: |
+          echo "=========================================="
+          echo " DEPLOYMENT COMPLETED"
+          echo "=========================================="
+          echo ""
+          echo "Paths:"
+          echo "  Config:  ${{ env.CONFIG_DIR }}"
+          echo "  App:     ${{ env.APP_DIR }}"
+          echo ""
+          echo "Services:"
+          echo "  Frontend:       http://localhost:3000"
+          echo "  Backend API:    http://localhost:5000"
+          echo "  Policy Scanner: http://localhost:8000"
+          echo "  Mongo Express:  http://localhost:8081"
+          echo ""
+          echo "Commit: ${{ github.sha }}"
+          echo "=========================================="

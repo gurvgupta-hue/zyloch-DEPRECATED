@@ -1,0 +1,50 @@
+from typing import Dict, List, Any
+from scanner_core.policies.kubernetes.base_checker import BaseSecurityChecker
+from scanner_core.models.violation import PolicyViolation
+from scanner_core.constants.security_constants import SecurityConstants
+from scanner_core.constants.k8s_cve_ids import K8SCVEIDs
+
+class LatestImageChecker(BaseSecurityChecker):
+    """Use of 'latest' or untagged image in Deployment, DaemonSet, or Pod"""
+    """
+    CVE ID:
+        - K8S-SEC-008: Use of 'latest' or untagged image
+        
+    """
+    SUPPORTED_KINDS = ["Deployment", "DaemonSet", "Pod"]
+    
+    def check(self, resources: List[Dict[str, Any]]) -> List[PolicyViolation]:
+        """Check for 'latest' or untagged images in all containers"""
+        self.violations = []
+        
+        for resource in resources:
+            if not self.should_check_resource(resource, self.SUPPORTED_KINDS):
+                continue
+            
+            self._check_resource(resource)
+        
+        return self.violations
+    
+    def _check_resource(self, resource: Dict[str, Any]) -> None:
+        """Check a single resource for latest image violations"""
+        kind = resource.get("kind")
+        pod_spec = self.helper.get_pod_spec(resource)
+        path_prefix = self.helper.get_path_prefix(kind)
+        
+        for ctype, idx, container in self.helper.get_containers(pod_spec):
+            image = container.get("image", "")
+            container_name = container.get("name", f"container-{idx}")
+            
+            if image.endswith(":latest") or ":" not in image:
+                self.add_violation(
+                    cve_id=K8SCVEIDs.LATEST_IMAGE_TAG,
+                    severity=SecurityConstants.SEVERITY_MEDIUM,
+                    resource=resource,
+                    key_path=f"{path_prefix}.{ctype}[{idx}].image",
+                    message=(
+                        f"Container '{container_name}' is using an untagged or 'latest' image '{image}'. "
+                        "Explicit version tags should be used instead."
+                    ),
+                    container_name=container_name,
+                    image=image
+                )

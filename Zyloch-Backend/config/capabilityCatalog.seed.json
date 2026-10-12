@@ -1,0 +1,236 @@
+{
+  "version": 3,
+  "limits": [
+    {
+      "key": "maxUsers",
+      "label": "Active seats",
+      "help": "Set to unlimited for per-seat plans; seats are still counted for billing.",
+      "supportsUnlimited": true,
+      "supportsSoftLimit": false
+    },
+    {
+      "key": "maxRepos",
+      "label": "Monitored repositories",
+      "help": "Repositories the tenant may store scan data for.",
+      "supportsUnlimited": true,
+      "supportsSoftLimit": true
+    },
+    {
+      "key": "maxScansPerMonth",
+      "label": "Scans per month",
+      "help": "Calendar-month ceiling. Leave unlimited if the plan is priced per day.",
+      "supportsUnlimited": true,
+      "supportsSoftLimit": true
+    },
+    {
+      "key": "maxScansPerDay",
+      "label": "Scans per day",
+      "help": "Daily ceiling. Set soft to allow overages instead of rejecting.",
+      "supportsUnlimited": true,
+      "supportsSoftLimit": true
+    }
+  ],
+  "scannerGroups": [
+    {
+      "id": "sbom",
+      "label": "SBOM generation (CycloneDX)",
+      "scanners": [
+        "sbom"
+      ]
+    },
+    {
+      "id": "secret",
+      "label": "Secret Scanner",
+      "scanners": [
+        "secret_scanner"
+      ]
+    },
+    {
+      "id": "iac",
+      "label": "IaC Scanner",
+      "help": "Terraform, CloudFormation, Docker, Kubernetes, Bicep, Ansible.",
+      "scanners": [
+        "docker",
+        "kubernetes",
+        "terraform_aws",
+        "terraform_azure",
+        "terraform_gcp",
+        "bicep",
+        "ansible",
+        "cloudformation"
+      ]
+    },
+    {
+      "id": "code-quality",
+      "label": "Code Quality Scanner",
+      "help": "Config and manifest linting.",
+      "scanners": [
+        "yaml-json"
+      ]
+    },
+    {
+      "id": "ci-cd-workflow",
+      "label": "CI-CD Workflow Scanner",
+      "help": "CI/CD pipeline definitions and workflow hardening.",
+      "scanners": [
+        "workflow"
+      ]
+    },
+    {
+      "id": "api-security",
+      "label": "API Security Scanning",
+      "scanners": [
+        "spec-scanner"
+      ]
+    },
+    {
+      "id": "yara",
+      "label": "YARA Scanner",
+      "scanners": [
+        "yara"
+      ]
+    },
+    {
+      "id": "skill-scanner",
+      "label": "AI Skill Scanner",
+      "help": "Agent skills, plugin and MCP manifests, prompt-injection detectors.",
+      "scanners": [
+        "skill-scanner"
+      ]
+    },
+    {
+      "id": "cis-agent",
+      "label": "CIS Agent Scanner",
+      "help": "CIS benchmark checks run by the agent scanner.",
+      "scanners": [
+        "cis-agent"
+      ]
+    }
+  ],
+  "features": [
+    {
+      "key": "scanops.sbom",
+      "label": "SBOM Manager",
+      "group": "ScanOps",
+      "help": "Includes EPSS exploit-prediction scoring and end-of-life dependency detection.",
+      "levels": null
+    },
+    {
+      "key": "scanops.skill_scanner",
+      "label": "AI Skill Scanner depth",
+      "group": "ScanOps",
+      "help": "Agent skills, plugin and MCP manifests, prompt-injection detectors.",
+      "levels": [
+        "basic",
+        "full"
+      ]
+    },
+    {
+      "key": "scanops.cis_agent",
+      "label": "CIS Agent Scanner",
+      "group": "ScanOps",
+      "levels": null
+    },
+    {
+      "key": "scanops.secret_scanner",
+      "label": "Secret Scanner depth",
+      "group": "ScanOps",
+      "help": "Full adds custom patterns.",
+      "levels": [
+        "basic",
+        "full"
+      ]
+    },
+    {
+      "key": "scanops.iac",
+      "label": "IaC Scanner depth",
+      "group": "ScanOps",
+      "levels": [
+        "basic",
+        "full"
+      ]
+    },
+    {
+      "key": "scanops.workflow",
+      "label": "CI-CD Workflow Scanner depth",
+      "group": "ScanOps",
+      "levels": [
+        "basic",
+        "full"
+      ]
+    },
+    {
+      "key": "scanops.spec_scanner",
+      "label": "API Security Scanning",
+      "group": "ScanOps",
+      "levels": null
+    },
+    {
+      "key": "scanops.yara",
+      "label": "YARA rules",
+      "group": "ScanOps",
+      "levels": null
+    },
+    {
+      "key": "scanops.ai_vs_human",
+      "label": "AI vulnerability insights",
+      "group": "AI",
+      "levels": [
+        "basic",
+        "full"
+      ]
+    },
+    {
+      "key": "ai.autofix",
+      "label": "AI AutoFix (with validation)",
+      "group": "AI",
+      "levels": null
+    },
+    {
+      "key": "integrations.level",
+      "label": "Integrations (Jira, Slack, …)",
+      "group": "Platform",
+      "levels": [
+        "basic",
+        "full"
+      ]
+    },
+    {
+      "key": "platform.usage_dashboard",
+      "label": "Usage dashboard & alerts",
+      "group": "Platform",
+      "levels": null
+    },
+    {
+      "key": "settings.sso",
+      "label": "SSO / SCIM",
+      "group": "Platform",
+      "levels": null
+    },
+    {
+      "key": "settings.oauth_google",
+      "label": "Google OAuth for members",
+      "group": "Platform",
+      "levels": null
+    },
+    {
+      "key": "settings.oauth_microsoft",
+      "label": "Microsoft OAuth for members",
+      "group": "Platform",
+      "levels": null
+    },
+    {
+      "key": "settings.email_support",
+      "label": "Email Support",
+      "group": "Platform",
+      "levels": null
+    },
+    {
+      "key": "settings.slack_support",
+      "label": "Priority support on Slack",
+      "group": "Platform",
+      "help": "Support tier, not a product capability — nothing in the product enforces it.",
+      "levels": null
+    }
+  ]
+}

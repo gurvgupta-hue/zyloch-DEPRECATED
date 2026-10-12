@@ -1,0 +1,105 @@
+zyloch-gateway:
+  fullnameOverride: zyloch-gateway
+  gatewayClassName: envoy-gateway
+
+zyloch-frontend:
+  fullnameOverride: zyloch-frontend
+  image:
+    repository: us-central1-docker.pkg.dev/secure-code-dev/zyloch/zyloch-ui
+    tag: "9242025"
+  env:
+    - name: NODE_ENV
+      value: production
+    # - name: NEXT_PUBLIC_API_URL
+    #   value: https://zyloch.secure-code.dev
+  service:
+    port: 3000
+  managedCertificates: {}
+  ingress:
+    enabled: false
+    className: gce
+    annotations: {}
+      # kubernetes.io/ingress.class: "gce"
+      # kubernetes.io/ingress.global-static-ip-name: "zyloch-static-ip"
+      # ingress.gcp.kubernetes.io/pre-shared-cert: "zyloch-secure-code-dev"
+    hosts: []
+      # - host: zyloch.secure-code.dev
+      #   paths:
+      #     - backend:
+      #         service:
+      #           name: zyloch-backend
+      #           port:
+      #             number: 5000
+      #       path: /auth/*
+      #       pathType: ImplementationSpecific
+      #     - backend:
+      #         service:
+      #           name: zyloch-frontend
+      #           port:
+      #             number: 3000
+      #       path: /*
+      #       pathType: ImplementationSpecific
+
+
+zyloch-backend:
+  fullnameOverride: zyloch-backend
+  image:
+    repository: us-central1-docker.pkg.dev/secure-code-dev/zyloch/zyloch-backend
+    tag: "9242025"
+  env:
+    - name: NODE_ENV
+      value: production
+    - name: PORT
+      value: production
+    # - name: MONGO_URI
+    #   value: mongodb://admin:password123@zyloch-mongodb:27017/zyloch?authSource=admin
+    # - name: FRONTEND_URL
+    #   value: http://zyloch-frontend:3000
+    # - name: GITHUB_CLIENT_ID
+    #   value: __GITHUB_CLIENT_ID__
+    # - name: GITHUB_CLIENT_SECRET
+    #   value: __GITHUB_CLIENT_SECRET__
+    # - name: GITHUB_WEBHOOK_SECRET
+    #   value: __GITHUB_WEBHOOK_SECRET__
+    # - name: JWT_SECRET
+    #   value: __JWT_SECRET__
+  service:
+    port: 5000
+  useStatefulSet: true
+  statefulSetData:
+    logs:
+      mountPath: /app/logs
+
+
+zyloch-policy-scanner:
+  fullnameOverride: zyloch-policy-scanner
+  image:
+    repository: us-central1-docker.pkg.dev/secure-code-dev/zyloch/zyloch-scanner
+    tag: "9212025"
+  env: []
+    # - name: MONGODB_URL
+    #   value: mongodb://admin:password@zyloch-mongodb:27017/admin
+    # - name: DATABASE_NAME
+    #   value: policy_scanner
+    # - name: GITHUB_WEBHOOK_SECRET
+    #   value: __GITHUB_WEBHOOK_SECRET__
+    # - name: GITHUB_APP_PRIVATE_KEY
+    #   value: __GITHUB_APP_PRIVATE_KEY__
+    # - name: GITHUB_APP_ID
+    #   value: __GITHUB_APP_ID__
+  service:
+    port: 8000
+  statefulSetData:
+    repos:
+      mountPath: /app/repos
+    output:
+      mountPath: /app/output
+
+
+zyloch-mongodb:
+  fullnameOverride: zyloch-mongodb
+  env: []
+    # - name: MONGO_INITDB_ROOT_USERNAME
+    #   value: admin
+    # - name: MONGO_INITDB_ROOT_PASSWORD
+    #   value: password123

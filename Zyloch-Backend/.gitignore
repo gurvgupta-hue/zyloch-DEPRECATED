@@ -1,0 +1,19 @@
+# Node modules
+node_modules/
+
+# Environment files
+.env
+github-app-private-key.pem
+
+# Build / distribution folders
+dist/
+build/
+
+# Logs
+logs/
+logs/error.log
+
+# CI test artifacts
+test-reports/
+*.zip
+*.zip

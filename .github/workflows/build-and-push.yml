@@ -1,0 +1,273 @@
+name: Build and Push Docker Images to GCP
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'develop'
+        type: string
+
+env:
+  GCP_REGISTRY: ${{ secrets.GCP_REGISTRY_LOCATION }}-docker.pkg.dev
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_REPOSITORY: ${{ secrets.GCP_REGISTRY_REPOSITORY }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    # Required for OIDC authentication
+    permissions:
+      contents: read
+      id-token: write
+    
+    strategy:
+      matrix:
+        service:
+          - Zyloch-Frontend
+          - Zyloch-Backend
+          - Zyloch-GHAPP-Backend
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Fetch current and previous commit
+      
+      - name: Check for changes in service directory
+        id: check_changes
+        run: |
+          # Check if this is the first commit or if previous commit exists
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            # Compare with previous commit
+            if git diff --quiet HEAD~1 HEAD -- ${{ matrix.service }}/; then
+              echo "changed=false" >> $GITHUB_OUTPUT
+              echo "No changes detected in ${{ matrix.service }}"
+            else
+              echo "changed=true" >> $GITHUB_OUTPUT
+              echo "Changes detected in ${{ matrix.service }}"
+            fi
+          else
+            # First commit, build everything
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "First commit, building ${{ matrix.service }}"
+          fi
+      
+      - name: Authenticate to Google Cloud
+        if: steps.check_changes.outputs.changed == 'true'
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          token_format: access_token
+      
+      - name: Set up Cloud SDK
+        if: steps.check_changes.outputs.changed == 'true'
+        uses: google-github-actions/setup-gcloud@v2
+      
+      - name: Configure Docker for Artifact Registry
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          gcloud auth configure-docker ${{ env.GCP_REGISTRY }} --quiet
+      
+      - name: Set up Docker Buildx
+        if: steps.check_changes.outputs.changed == 'true'
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build and Push Docker Image
+        id: docker_build
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          SERVICE_NAME_LOWER=$(echo "${{ matrix.service }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_NAME="${{ env.GCP_REGISTRY }}/${{ env.GCP_PROJECT_ID }}/${{ env.GCP_REPOSITORY }}/${SERVICE_NAME_LOWER}"
+          IMAGE_TAG="${{ github.sha }}"
+          META_FILE="${RUNNER_TEMP}/build-metadata-${{ matrix.service }}.json"
+
+          docker buildx build \
+            --platform linux/amd64 \
+            --file ${{ matrix.service }}/Dockerfile \
+            --tag ${IMAGE_NAME}:${IMAGE_TAG} \
+            --tag ${IMAGE_NAME}:latest \
+            --push \
+            --metadata-file "$META_FILE" \
+            ${{ matrix.service }}
+
+          DIGEST=$(jq -r '.["containerimage.digest"] // .["containerimage.descriptor"].digest // empty' "$META_FILE")
+          if [ -z "$DIGEST" ] || [ "$DIGEST" = "null" ]; then
+            DIGEST=$(docker buildx imagetools inspect "${IMAGE_NAME}:${IMAGE_TAG}" --format '{{.Manifest.Digest}}' 2>/dev/null || :)
+          fi
+
+          {
+            echo "image_ref=${IMAGE_NAME}:${IMAGE_TAG}"
+            echo "image_digest=${DIGEST}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Output Image Details
+        if: steps.check_changes.outputs.changed == 'true' && steps.docker_build.outcome == 'success'
+        run: |
+          SERVICE_NAME_LOWER=$(echo "${{ matrix.service }}" | tr '[:upper:]' '[:lower:]')
+          echo "Image pushed successfully!"
+          echo "Service: ${{ matrix.service }}"
+          echo "Image: ${{ env.GCP_REGISTRY }}/${{ env.GCP_PROJECT_ID }}/${{ env.GCP_REPOSITORY }}/${SERVICE_NAME_LOWER}:${{ github.sha }}"
+          echo "Latest: ${{ env.GCP_REGISTRY }}/${{ env.GCP_PROJECT_ID }}/${{ env.GCP_REPOSITORY }}/${SERVICE_NAME_LOWER}:latest"
+
+      - name: Skip Build
+        if: steps.check_changes.outputs.changed == 'false'
+        run: |
+          echo "Skipping ${{ matrix.service }} - no changes detected"
+
+      - name: Record build result
+        if: always()
+        run: |
+          SERVICE="${{ matrix.service }}"
+          CHANGED="${{ steps.check_changes.outputs.changed }}"
+          BUILD_OUTCOME="${{ steps.docker_build.outcome }}"
+          IMAGE_REF="${{ steps.docker_build.outputs.image_ref }}"
+          IMAGE_DIGEST="${{ steps.docker_build.outputs.image_digest }}"
+
+          if [ "$CHANGED" != "true" ]; then
+            STATUS="skipped"
+            IMAGE_REF=""
+            IMAGE_DIGEST=""
+          elif [ "$BUILD_OUTCOME" = "success" ]; then
+            STATUS="success"
+          else
+            STATUS="failure"
+            IMAGE_REF=""
+            IMAGE_DIGEST=""
+          fi
+
+          echo "$SERVICE|$STATUS|$IMAGE_REF|$IMAGE_DIGEST" > "build-result-${SERVICE}.txt"
+          cat "build-result-${SERVICE}.txt"
+
+      - name: Upload build result artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-result-${{ matrix.service }}
+          path: build-result-${{ matrix.service }}.txt
+          retention-days: 1
+
+  notify-slack:
+    needs: build-and-push
+    if: success()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Download build results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: build-result-*
+          merge-multiple: true
+          path: build-results
+
+      - name: Resolve PR metadata
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          RAW=$(gh api "repos/${{ github.repository }}/commits/${{ github.sha }}/pulls")
+          NUMBER=$(echo "$RAW" | jq -r '.[0].number // empty')
+          AUTHOR=$(echo "$RAW" | jq -r '.[0].user.login // empty')
+          {
+            echo "number=${NUMBER}"
+            echo "author=${AUTHOR}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Check Slack configuration
+        id: slack_config
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -n "${SLACK_WEBHOOK_URL}" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Slack notification skipped: set SLACK_WEBHOOK_URL repository secret."
+          fi
+
+      - name: Notify Slack
+        if: steps.slack_config.outputs.enabled == 'true'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          PR_AUTHOR: ${{ steps.pr.outputs.author }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SERVER_URL: ${{ github.server_url }}
+        run: |
+          set -euo pipefail
+
+          get_line() {
+            local svc="$1"
+            local f=""
+            f=$(find build-results -name "build-result-${svc}.txt" -print -quit 2>/dev/null || true)
+            if [ -n "$f" ] && [ -f "$f" ]; then
+              cat "$f"
+            else
+              echo "${svc}|unknown|||"
+            fi
+          }
+
+          image_for() {
+            local svc="$1"
+            local line status ref digest
+            line=$(get_line "$svc")
+            status=$(echo "$line" | cut -d'|' -f2)
+            ref=$(echo "$line" | cut -d'|' -f3)
+            digest=$(echo "$line" | cut -d'|' -f4)
+            if [ "$status" = "success" ] && [ -n "$digest" ]; then
+              echo "$digest"
+            elif [ "$status" = "success" ] && [ -n "$ref" ]; then
+              echo "$ref"
+            else
+              echo "N/A"
+            fi
+          }
+
+          PR_NO="${PR_NUMBER:-}"
+          PR_FROM="${PR_AUTHOR:-}"
+          [ -z "$PR_NO" ] && PR_NO="N/A"
+          [ -z "$PR_FROM" ] && PR_FROM="N/A (direct push or no linked PR)"
+
+          if [ "$PR_NO" != "N/A" ]; then
+            PR_NO_SLACK="<${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/pull/${PR_NO}|${PR_NO}>"
+          else
+            PR_NO_SLACK="N/A"
+          fi
+
+          IMG_FE=$(image_for "Zyloch-Frontend")
+          IMG_BE=$(image_for "Zyloch-Backend")
+          IMG_GH=$(image_for "Zyloch-GHAPP-Backend")
+
+          MRKDWN=$(printf '%s\n' \
+            '================' \
+            '*Build & Push Info* :rocket:' \
+            '================' \
+            '*[Metadata]*' \
+            "*PR No:* ${PR_NO_SLACK}" \
+            "*PR from:* ${PR_FROM}" \
+            '-------------' \
+            '*[Images]* :ship:' \
+            '----------------' \
+            "*Zyloch-Frontend :* ${IMG_FE}" \
+            "*Zyloch-Backend :* ${IMG_BE}" \
+            "*Zyloch-GHAPP-Backend :* ${IMG_GH}")
+
+          # Plain text fallback for notifications; blocks use mrkdwn so *label* is bold in Slack
+          PAYLOAD=$(jq -n \
+            --arg text "Build & Push — ${{ github.repository }} @ ${GITHUB_SHA:0:7}" \
+            --arg mrkdwn "$MRKDWN" \
+            '{text: $text, blocks: [{type: "section", text: {type: "mrkdwn", text: $mrkdwn}}]}')
+
+          curl -fsS -X POST -H 'Content-type: application/json' \
+            --data "$PAYLOAD" \
+            "$SLACK_WEBHOOK_URL"

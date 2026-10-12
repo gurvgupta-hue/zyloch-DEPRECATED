@@ -1,0 +1,445 @@
+.pageRoot {
+    min-height: 100%;
+    width: 100%;
+    padding: 4px;
+}
+
+.sbomPage {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+}
+
+.shellCard {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    overflow: hidden;
+}
+
+.topContainer {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 73px;
+    padding: 16px 20px;
+    width: 100%;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    box-shadow: none;
+    border-radius: 0;
+    gap: 10px;
+}
+
+.pkgGroup {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+
+.backBtn {
+    box-sizing: border-box;
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--elevated-surface);
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.backBtn:hover {
+    border-color: var(--border-hover);
+    background: color-mix(in srgb, var(--elevated-surface) 70%, var(--surface));
+}
+
+.pkgMeta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+}
+
+.pkgTitleRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.pkgTitle {
+    margin: 0;
+    color: var(--text);
+    font: 700 16px/24px var(--font-ui);
+}
+
+.versionPill {
+    box-sizing: border-box;
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--elevated-surface);
+    color: var(--muted);
+    font: 500 11px/16px var(--font-ui);
+}
+
+.pkgSubtitle {
+    margin: 0;
+    color: var(--muted);
+    font: 400 11.5px/17px var(--font-ui);
+}
+
+.actionWrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.autofixActions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.autofixResponseTitle {
+    margin: 0;
+    color: var(--muted);
+    font: 600 11px/16px var(--font-ui);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.autofixResponseBody {
+    margin: 0 0 14px;
+    color: var(--text);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font: 400 13px/22px var(--font-ui);
+}
+
+.autofixOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.autofixOverlayOpen {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.autofixSidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 100;
+    width: min(480px, 92vw);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.18);
+    transform: translateX(100%);
+    transition: transform 0.25s ease-in-out;
+}
+
+.autofixSidebarOpen {
+    transform: translateX(0);
+}
+
+.autofixSidebarHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.autofixCloseBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    width: 28px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+}
+
+.autofixCloseBtn:hover {
+    color: var(--text);
+    border-color: var(--muted);
+}
+
+.autofixSidebarBody {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+.autofixSidebarFooter {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--border);
+}
+
+.autofixError,
+.prResult {
+    margin: 0;
+    font: 500 11px/16px var(--font-ui);
+}
+
+.autofixError { color: var(--danger); }
+.prResult { color: var(--success); text-decoration: none; }
+.prResult:hover { text-decoration: underline; }
+
+.prBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    min-height: 25px;
+    min-width: 190px;
+    background: var(--success);
+    color: #ffffff;
+    border-radius: 4px;
+    border: 0;
+    text-decoration: none;
+    padding: 4px 8px;
+    font: 500 12px/16px var(--font-ui);
+}
+
+.prBtn:hover {
+    background: color-mix(in srgb, var(--success) 85%, black);
+}
+
+.prBtnLeft {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.cveDetailWrap {
+    width: 100%;
+}
+
+.cveCard {
+    box-sizing: border-box;
+    width: 100%;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.cardHead {
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--border);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.vulnTitle {
+    margin: 0;
+    font: 700 14px/20px var(--font-ui);
+}
+
+.titleCritical {
+    color: var(--danger);
+}
+
+.titleDefault {
+    color: var(--text);
+}
+
+.metaRow {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.metaItem {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.metaLabel {
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font: 600 11px/15px var(--font-ui);
+}
+
+.metaValue {
+    color: var(--text);
+    font: 500 14px/18px var(--font-ui);
+}
+
+.metaCritical {
+    color: var(--danger);
+    font: 400 14px/16px var(--font-ui);
+}
+
+.detailsSection {
+    box-sizing: border-box;
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.detailsTitle {
+    margin: 0;
+    color: var(--text);
+    font: 600 12px/18px var(--font-ui);
+}
+
+.detailsBox {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.detailRow {
+    display: flex;
+    width: 100%;
+    min-height: 44px;
+    border-bottom: 1px solid var(--border);
+}
+
+.detailRow:last-child {
+    border-bottom: 0;
+}
+
+.labelCell {
+    box-sizing: border-box;
+    width: 148px;
+    min-width: 148px;
+    padding: 10px 16px;
+    background: var(--elevated-surface);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.55px;
+    font: 600 11px/16px var(--font-ui);
+}
+
+.valueCell {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+}
+
+.valueText {
+    color: var(--text);
+    font: 500 12px/18px var(--font-ui);
+    word-break: break-word;
+}
+
+.linkishValue {
+    color: var(--info);
+}
+
+.reachabilityValue {
+    color: var(--text);
+}
+
+.patchedValue {
+    color: var(--success);
+}
+
+.descriptionSection {
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.descriptionText {
+    margin: 0;
+    color: var(--text-secondary);
+    font: 400 12px/20px var(--font-ui);
+}
+
+[data-theme="dark"] .shellCard,
+[data-theme="dark"] .cveCard {
+    background: #0b0b0f;
+}
+
+[data-theme="dark"] .detailsBox,
+[data-theme="dark"] .valueCell,
+[data-theme="dark"] .descriptionSection {
+    background: #000000;
+}
+
+@media (max-width: 768px) {
+    .topContainer {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 12px;
+        min-height: 0;
+    }
+
+    .shellCard {
+        border-radius: 8px;
+    }
+
+    .actionWrap {
+        width: 100%;
+    }
+
+    .prBtn {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .labelCell {
+        width: 120px;
+        min-width: 120px;
+        padding: 10px 12px;
+    }
+
+    .valueCell {
+        padding: 10px 12px;
+    }
+
+    .cardHead,
+    .detailsSection,
+    .descriptionSection {
+        padding: 12px;
+    }
+
+    .sbomPage {
+        gap: 8px;
+    }
+}

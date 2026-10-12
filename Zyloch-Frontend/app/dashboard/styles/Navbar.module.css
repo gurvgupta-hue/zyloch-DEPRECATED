@@ -1,0 +1,121 @@
+.navbarContainer {
+ 
+  top: 0;
+  left: 0;
+  z-index: 50;
+}
+
+.navbar {
+  height: 60px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.orgSelector {
+  position: relative;
+}
+
+.orgSelectorButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.orgSelectorButton:hover {
+  background: #f3f4f6;
+}
+
+.icon {
+  transition: transform 0.2s ease;
+}
+
+.icon.open {
+  transform: rotate(180deg);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 8px 0;
+  min-width: 200px;
+  z-index: 100;
+  border: 1px solid #e5e7eb;
+}
+
+.dropdownItem {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.dropdownItem:hover {
+  background: #f3f4f6;
+}
+
+.dropdownItem.active {
+  color: #111827;
+  font-weight: 600;
+  background: #f3f4f6;
+}
+
+.addOrgSection {
+  padding: 8px 12px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 4px;
+  display: flex;
+  gap: 8px;
+}
+
+.orgInput {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.orgInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.addOrgButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addOrgButton:hover {
+  background: #2563eb;
+}

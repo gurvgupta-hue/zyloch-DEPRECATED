@@ -1,0 +1,118 @@
+policies:
+  plaintext-secrets:
+    code: GHA-SEC001
+    severity: critical
+    description: "Plaintext secrets should not appear in workflows"
+    pattern: (?i)echo\s+[\"']?\${{\s*secrets\.[^}]+}}[\"']?
+    url: https://apps.secure-code.dev/Policy-Guide.html#:~:text=GHA%2DSEC001
+    exclude:
+  
+  untrusted-input:
+    code: GHA-SEC002
+    severity: critical
+    description: "Untrusted user input should not be used directly in shell commands"
+    pattern: \${{\s*github\.event\.(inputs|pull_request)\.[^}]+}}
+    url: https://apps.secure-code.dev/Policy-Guide.html#:~:text=GHA%2DSEC002
+    exclude:
+
+  minimally-scoped-credentials:
+    code: GHA-SEC003
+    severity: medium
+    description: "Workflow is missing 'permissions' block"
+    missing_block: permissions
+    url: https://apps.secure-code.dev/Policy-Guide.html#:~:text=GHA%2DSEC003
+    exclude:
+      - .github/workflows/new-changes.yaml
+
+  unknown-actions:
+    code: GHA-SEC004
+    severity: low
+    description: "Action used is not from an allowlisted org"
+    pattern: uses:\s*([^\s/@]+/[^\s@]+)@[\w.-]+
+    url: https://apps.secure-code.dev/Policy-Guide.html#:~:text=GHA%2DSEC004
+    exclude:
+    allowlist:
+      - actions
+      - github
+      - rtCamp
+
+  non-specific-version-tags:
+    code: GHA-SEC005
+    severity: low
+    description: "Action is not pinned to a specific commit SHA"
+    pattern: uses:\s+[^\s@]+@(main|master|latest|v\d+(?![\.\-]))\b
+    url: https://apps.secure-code.dev/Policy-Guide.html#:~:text=GHA%2DSEC005
+    exclude:
+
+  self-hosted-runners:
+    code: GHA-SEC006
+    severity: medium
+    description: "Self-hosted runners should not be used"
+    pattern: runs-on:\s*\[?.*self-hosted.*
+    url: https://apps.secure-code.dev/Policy-Guide.html#:~:text=GHA%2DSEC006
+    exclude:
+
+  pull_request_target:
+    code: GHA-SEC007
+    severity: critical
+    description: "Avoid using pull_request_target with external ref checkout"
+    pattern: |
+      on:\s*pull_request_target[\s\S]*?- uses: actions/checkout@.*[\s\S]*?ref:\s*\${{\s*github\.event\.pull_request\.head\.sha\s*}}
+    url: https://apps.secure-code.dev/Policy-Guide.html#:~:text=GHA%2DSEC007
+    exclude:
+
+  artifact-secrets-upload:
+    code: GHA-SEC008
+    severity: critical
+    description: Artifacts potentially exposing secrets (e.g., uploading `.env`, `.pem`, `.key`, `.crt`, `.secret` files).
+    pattern: 'path:\s*["'']?.*?\.(env|pem|key|crt|secret)["'']?'
+    url: https://apps.secure-code.dev/Policy-Guide.html#:~:text=GHA%2DSEC008
+    exclude:
+
+  missing-download-checksum:
+    code: GHA-SEC009
+    severity: medium
+    description: Downloading files using curl/wget without checksum validation (e.g., sha256sum or GPG).
+    pattern: '(wget)\s+.*(?<!sha256sum)(?<!gpg)'
+    url: https://apps.secure-code.dev/Policy-Guide.html#:~:text=GHA%2DSEC009
+    exclude:
+
+  secrets-in-env:
+    code: GHA-SEC010
+    severity: critical
+    description: Direct usage of secrets in `env:` block, which may expose them in logs or misuse them.
+    pattern: 'env:\s*\n(\s+[A-Z_]+:\s*\${{\s*secrets\.[^}]+}})+'
+    url: https://apps.secure-code.dev/Policy-Guide.html#:~:text=GHA%2DSEC010
+    exclude:
+
+  auto-approve-pull-requests:
+    code: GHA-SEC011
+    severity: critical
+    description: Auto-approving pull requests via `gh pr review --approve` or similar commands.
+    pattern: 'gh\s+pr\s+review\s+.*--approve'
+    url: https://apps.secure-code.dev/Policy-Guide.html#:~:text=GHA%2DSEC011
+    exclude:
+
+  continue-on-error-used:
+    code: GHA-SEC012
+    severity: low
+    description: "Usage of `continue-on-error: true` may hide errors in CI/CD."
+    pattern: 'continue-on-error:\s*true'
+    url: https://apps.secure-code.dev/Policy-Guide.html#:~:text=GHA%2DSEC012
+    exclude:
+
+  deprecated-set-output:
+    code: GHA-SEC013
+    severity: low
+    description: Use of deprecated `set-output` command (replaced by environment files).
+    pattern: 'echo\s+"?::set-output\s+name=.*"'
+    url: https://apps.secure-code.dev/Policy-Guide.html#:~:text=GHA%2DSEC013
+    exclude:
+
+  gcp-legacy-auth:
+    code: GHA-SEC014
+    severity: low
+    description: "Avoid using legacy GCP authentication via credentials_json. Prefer OIDC with Workload Identity Federation."
+    pattern: 'uses:\s*["'']?google-github-actions/auth@v2["'']?'
+    url: https://apps.secure-code.dev/Policy-Guide.html#:~:text=GHA%2DSEC014
+    exclude:

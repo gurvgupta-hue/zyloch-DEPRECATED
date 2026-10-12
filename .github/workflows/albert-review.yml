@@ -1,0 +1,48 @@
+name: Albert Code Review
+
+on:
+  pull_request:
+    types: [opened, reopened]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number to review"
+        required: true
+        type: string
+        
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: albert-review-${{ github.event.pull_request.number || inputs.pr_number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run Albert
+        env:
+          # ---- Provider (OpenAI) ----
+          ALBERT_PROVIDER: openai
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ALBERT_MODEL: gpt-4.1-mini
+          # OPENAI_REASONING_EFFORT: low
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          ALBERT_MAX_TOKENS: "16000"              # OpenAI: this is max_completion_tokens (reasoning + output)
+          ALBERT_MAX_DIFF_CHARS: "120000"         # diffs bigger than this are truncated
+          ALBERT_EXCLUDE: "*.lock,*.min.js,*.svg,package-lock.json,yarn.lock,poetry.lock,dist/*,build/*,*.snap"
+        run: python .github/albert/review.py
